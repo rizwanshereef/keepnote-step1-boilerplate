@@ -1,12 +1,14 @@
 package com.stackroute.keepnote.controller;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.stackroute.keepnote.model.Note;
@@ -15,6 +17,7 @@ import com.stackroute.keepnote.repository.NoteRepository;
 /*Annotate the class with @Controller annotation. @Controller annotation is used to mark 
  * any POJO class as a controller so that Spring can recognize this class as a Controller
  * */
+@Controller
 
 public class NoteController {
 	/*
@@ -27,29 +30,28 @@ public class NoteController {
 	 * 3. Delete an existing note.
 	 * 4. Update an existing note.
 	 */
-	
+
+
 	/* 
 	 * Get the application context from resources/beans.xml file using ClassPathXmlApplicationContext() class.
 	 * Retrieve the Note object from the context.
 	 * Retrieve the NoteRepository object from the context.
 	 */
-	
-	ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
-	private Note note =(Note)context.getBean("note");
-	private NoteRepository noteRepository = (NoteRepository)context.getBean("noteRepository");
+	ApplicationContext applicationcontext = new ClassPathXmlApplicationContext("beans.xml");
+	Note note = (Note) applicationcontext.getBean("note");
+	NoteRepository noteRepo = (NoteRepository) applicationcontext.getBean("noteRepository");
 
-	
 	/*Define a handler method to read the existing notes by calling the getAllNotes() method 
 	 * of the NoteRepository class and add it to the ModelMap which is an implementation of Map 
 	 * for use when building model data for use with views. it should map to the default URL i.e. "/" */
-	
-	@RequestMapping(value="/")
-	public String getAllNotes(ModelMap modalMap) {
-		List<Note> list = noteRepository.getAllNotes();
-		modalMap.addAttribute("list",list);
+	@GetMapping("/")
+	public String getAllNotes(ModelMap model) {
+		model.addAttribute("notes",noteRepo.getAllNotes());
 		return "index";
 	}
-	
+
+
+
 	/*Define a handler method which will read the Note data from request parameters and
 	 * save the note by calling the addNote() method of NoteRepository class. Please note 
 	 * that the createdAt field should always be auto populated with system time and should not be accepted 
@@ -57,39 +59,45 @@ public class NoteController {
 	 * notes. Hence, reading notes has to be done here again and the retrieved notes object 
 	 * should be sent back to the view using ModelMap.
 	 * This handler method should map to the URL "/saveNote". 
-	*/
-	@RequestMapping(value = "/saveNote")
-    public String addNotes(@RequestParam(value = "noteId") int id, @RequestParam(value = "noteTitle") String noteTitle, @RequestParam(value = "noteContent") String noteContent, @RequestParam(value = "noteStatus") String noteStatus, ModelMap modalMap) {
-        if(!noteRepository.exists(id)) {
-            Note note = new Note();
-            note.setNoteId(id);
-            note.setNoteTitle(noteTitle);
-            note.setNoteContent(noteContent);
-            note.setNoteStatus(noteStatus);
-            LocalDateTime today = LocalDateTime.now();
-            note.setCreatedAt(today);
-            noteRepository.addNote(note);
+	 */
+	@PostMapping("/saveNote")
+	public String addNote(@RequestParam("noteId") int noteId,
+			@RequestParam("noteTitle") String noteTitle,
+			@RequestParam("noteContent") String noteContent,
+			@RequestParam("noteStatus") String noteStatus,
+			ModelMap model){
+		Note newDetails =  new Note();
+		newDetails.setNoteId(noteId);
+		newDetails.setNoteTitle(noteTitle);
+		newDetails.setNoteContent(noteContent);
+		newDetails.setNoteStatus(noteStatus);
+		newDetails.setLocalDateTime();
+		
+		if (noteRepo.exists(noteId)) {
+            return "redirect:/";
         }
-        else {
-            modalMap.addAttribute("error","Note Id  already exists");
-        }
-        List<Note> list = noteRepository.getAllNotes();
-        modalMap.addAttribute("list",list);
-        return "index";
-    }
-	
+
+		noteRepo.addNote(newDetails);
+		
+		for (Note note: noteRepo.getList()) {
+			//modelMap.addAttribute(Character.toString((char) ++i), note);
+			System.out.println(note.getNoteId() + " "  + note.getNoteTitle() + " " + note.getNoteContent()
+			+ " " + note.getNoteStatus() + " " + note.getLocalDateTime());
+		}
+		model.addAttribute("notes", noteRepo.getAllNotes());
+		return "index";
+	}
+
+
 	/* Define a handler method to delete an existing note by calling the deleteNote() method 
 	 * of the NoteRepository class
 	 * This handler method should map to the URL "/deleteNote" 
-	*/
-	
-	@RequestMapping(value="/deleteNote")
-	public String deleteNotes(@RequestParam("noteId")int id, ModelMap modalMap) {
-		noteRepository.deleteNote(id);
-		List<Note> list = noteRepository.getAllNotes();
-		modalMap.addAttribute("list",list);
+	 */
+	@GetMapping("/deleteNote")
+	public String deleteNode(@RequestParam("noteId") int noteId) {
+		noteRepo.deleteNote(noteId);
+
 		return "redirect:/";
-		
 	}
-	
+
 }

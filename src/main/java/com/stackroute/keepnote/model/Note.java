@@ -13,22 +13,17 @@ public class Note {
 	 * setters for the fields. The value of createdAt should not be accepted from
 	 * the user but should be always initialized with the system date
 	 */
-
 	private int noteId;
 	private String noteTitle;
 	private String noteContent;
 	private String noteStatus;
-	private LocalDateTime createdAt;
+	private LocalDateTime presentDateTime;
 	
-	public Note() {
-		
-	}
-
 	/* All the getters/setters definition should be implemented here */
 
-	
 
-
+	public Note() {
+	}
 
 	public int getNoteId() {
 		return noteId;
@@ -62,22 +57,23 @@ public class Note {
 		this.noteStatus = noteStatus;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	public LocalDateTime getLocalDateTime() {
+		return presentDateTime;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
+	public void setLocalDateTime() {
+		this.presentDateTime = presentDateTime.now();
 	}
 
-	/* Override the toString() method */
+    /* Override the toString() method */
 
 	@Override
 	public String toString() {
 		return "Note [noteId=" + noteId + ", noteTitle=" + noteTitle + ", noteContent=" + noteContent + ", noteStatus="
-				+ noteStatus + ", createdAt=" + createdAt + "]";
+				+ noteStatus + ", presentDateTime=" + presentDateTime + "]";
 	}
-	
+
 	
 
+	
 }

@@ -14,13 +14,11 @@ import com.stackroute.keepnote.model.Note;
 public class NoteRepository {
 
 	/* Declare a variable called "list" to store all the notes. */
-	
-	private List<Note> list;
+	List<Note> list = new ArrayList<Note>();
 
 	public NoteRepository() {
 
 		/* Initialize the variable using proper data type */
-		list = new ArrayList<>();
 	}
 
 	/* This method should return all the notes in the list */
@@ -32,8 +30,7 @@ public class NoteRepository {
 	/* This method should set the list variable with new list of notes */
 
 	public void setList(List<Note> list) {
-		this.list= list;
-
+		this.list = list;
 	}
 
 	/*
@@ -42,23 +39,24 @@ public class NoteRepository {
 	 */
 
 	public void addNote(Note note) {
-		this.list.add(note);
-
+		list.add(note);
 	}
 
 	/* This method should deleted a specified note from the list */
 
 	public boolean deleteNote(int noteId) {
 		/* Use list iterator to find matching note id and remove it from the list */
-		for(Note note:list) {
-			if(note.getNoteId()==noteId) {
-				list.remove(note);
+		for(Note noteIter : list)
+		{
+			if(noteIter.getNoteId()==noteId)
+			{
+				list.remove(noteIter);
 				return true;
 			}
 		}
 		return false;
-		
-		
+
+
 	}
 
 	/* This method should return the list of notes */
@@ -74,8 +72,10 @@ public class NoteRepository {
 	 */
 
 	public boolean exists(int noteId) {
-		for(Note note:list) {
-			if(note.getNoteId()==noteId) {
+		for(Note noteIter: list)
+		{
+			if(noteIter.getNoteId()==noteId)
+			{
 				return true;
 			}
 		}
