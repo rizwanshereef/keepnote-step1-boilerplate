@@ -90,6 +90,10 @@
 						<failOnMissingWebXml>false</failOnMissingWebXml>
 					</configuration>
 				</plugin>
+				<plugin>
+   <artifactId>maven-surefire-plugin</artifactId>
+   <version>3.0.0-M3</version>
+</plugin>
 			</plugins>
 		</pluginManagement>
 		<finalName>KeepNote-Step1-Boilerplate</finalName>
